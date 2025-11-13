@@ -1,4 +1,4 @@
-import { Prisma, Number } from "@prisma/client";
+import { Number } from "@prisma/client";
 
 import { createNewBingoGame, getAllNumbersFromBingoGame, getBingoGameById, setNumberForBingoGame, updateBingoGameStatusToFinished } from "../repositories/bingo-repository";
 import BINGORULES from "../config/bingo-rules";

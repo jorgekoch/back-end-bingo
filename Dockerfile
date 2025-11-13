@@ -1,22 +1,28 @@
-# busca imagem base do node
-FROM node
+# Usa uma imagem base do Node LTS
+FROM node:18
 
-# usa essa pasta como diretório de trabalho (tipo um CD)
+# Define o diretório de trabalho dentro do container
 WORKDIR /usr/src
 
-# copia o diretório atual para a workdir definida acima
+# Copia apenas os arquivos de dependência primeiro (melhor para cache)
+COPY package*.json ./
+
+# Instala as dependências
+RUN npm install
+
+# Copia o restante do código do projeto
 COPY . .
 
-# "expõe" a porta 5000
-EXPOSE 5000
+RUN npx prisma generate
 
-RUN ln -s /usr/lib/libssl.so.3 /lib/libssl.so.3
-
-# baixa as dependências
-RUN npm i
-
-# faz a compilação do TS para JS
+# Compila o código TypeScript
 RUN npm run build
 
-# só roda quando a imagem se torna um container em execução (comando inicial)
+# Expõe a porta da aplicação
+EXPOSE 5000
+
+# Corrige a dependência do OpenSSL (necessário em algumas imagens)
+RUN ln -s /usr/lib/libssl.so.3 /lib/libssl.so.3
+
+# Comando padrão ao iniciar o container
 CMD ["npm", "start"]

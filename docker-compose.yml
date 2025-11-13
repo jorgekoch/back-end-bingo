@@ -1,0 +1,49 @@
+services:
+  postgres:
+    image: postgres
+    container_name: mypostgres
+    ports:
+      - 5433:5432
+    networks:
+      - mynetwork
+    env_file:
+      - .env
+    volumes:
+      - myvolume:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -q -d bingo-driven -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  
+  backend:
+    image: mybackend
+    container_name: mybackend
+    build: .
+    ports:
+      - 5000:5000
+    networks:
+      - mynetwork
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - .env
+
+  pgadmin:
+    container_name: mypgadmin
+    image: dpage/pgadmin4
+    ports:
+      - 8080:80
+    networks:
+      - mynetwork
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=jorgeluizkoch@gmail.com
+      - PGADMIN_DEFAULT_PASSWORD=postgres
+
+networks:
+  mynetwork:
+    external: true
+
+volumes:
+  myvolume:
