@@ -3,8 +3,9 @@
   "version": "1.0.0",
  "scripts": {
   "build": "tsc",
-  "start": "node dist/src/server.js",
+  "start": "npm run prisma:migrate:deploy && node dist/src/server.js",
   "dev": "ts-node-dev src/server.ts",
+  "prisma:migrate:deploy": "prisma migrate deploy",
   "test:load-envs": "dotenv -e .env.test",
   "test": "npm run test:load-envs -- jest -- --runInBand",
   "test:ci": "npm run test:migration && npm run test",
